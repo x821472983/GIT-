@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dc.ssm.dao.SysRoleDao">
+
+    <resultMap id="mapRoleVo" type="com.dc.ssm.vo.SysRoleVo">
+        <id property="role_id" column="role_id"></id>
+        <association property="role" javaType="SysRole">
+            <id property="role_id" column="role_id"></id>
+            <result property="name" column="name"></result>
+            <result property="memo" column="memo"></result>
+        </association>
+        <collection property="listRolePermissions" ofType="SysRolePermission">
+            <id property="permission_id" column="permission_id"></id>
+            <result property="code" column="code"></result>
+            <result property="permission_value" column="permission_value"></result>
+        </collection>
+    </resultMap>
+    <!--新增角色信息-->
+<insert id="addRole" parameterType="SysRole" keyProperty="role_id" useGeneratedKeys="true">
+    insert into t_sys_role (name,memo,create_user_id,create_user_name,create_time,version,is_deleted)
+    values(#{name},#{memo},#{create_user_id},#{create_user_name},now(),0,0)
+</insert>
+    <!--新增角色权限-->
+    <insert id="insertRolePermission" parameterType="SysRolePermission" keyProperty="permission_id" useGeneratedKeys="true">
+        insert into t_sys_role_permission(fk_role_id,code,permission_value,create_user_id,create_user_name,create_time,version,is_deleted)
+        values(#{fk_role_id},#{code},#{permission_value},#{create_user_id},#{create_user_name},now(),0,0)
+    </insert>
+    <select id="selectRoleByName" parameterType="string" resultType="SysRole">
+        select * from t_sys_role where name=#{name} and is_deleted=0
+    </select>
+
+    <select id="selectRole" resultType="SysRole">
+        select * from t_sys_role where is_deleted=0 order by role_id asc
+    </select>
+
+    <select id="selectRoleVoById" resultMap="mapRoleVo" parameterType="int">
+        select sr.*,srp.permission_id,srp.code,srp.permission_value from t_sys_role sr
+        left join t_sys_role_permission srp
+        on sr.role_id=srp.fk_role_id
+        where sr.is_deleted=0 and sr.role_id=#{id}
+    </select>
+
+
+    <!--逻辑删除角色信息-->
+    <update id="removeRole" parameterType="string">
+        update t_sys_role
+        set is_deleted = 1
+        where is_deleted = 0 and role_id in (${id})
+    </update>
+    <!--逻辑删除角色权限，删除角色信息和权限时操作-->
+    <update id="removeRolePermission" parameterType="string">
+        update t_sys_role_permission
+        set is_deleted = 1
+        where fk_role_id in (${id}) and is_deleted=0
+    </update>
+
+
+    <!--更新角色权限-->
+    <update id="updateRolePermission" parameterType="SysRolePermission">
+        update t_sys_role_permission
+        set
+        <if test="permission_value != null">permission_value = #{permission_value},</if>
+        update_time = now(),
+        update_user_id = #{update_user_id},
+        update_user_name = #{update_user_name},
+        version = #{version} + 1
+        where fk_role_id = #{fk_role_id} and code = #{code}
+    </update>
+
+
+
+
+    <delete id="deleteRolePermissionById" parameterType="int">
+        delete from t_sys_role_permission
+        where fk_role_id=#{role_id}
+    </delete>
+
+    <update id="updataRoleById" parameterType="SysRole">
+        update t_sys_role
+        set
+        name = #{name},
+        memo=#{memo}
+        where role_id=#{role_id}
+    </update>
+
+    <!--通过名称模糊查找角色信息-->
+    <select id="selectRoleLikeName" parameterType="string" resultType="SysRole">
+    select *
+    from t_sys_role
+    where is_deleted = 0 and name like '${name}%'
+    order by name asc
+    </select>
+
+    <!--高级模糊查找-->
+    <select id="selectRoleByLikeName" resultType="SysRole" parameterType="com.base.pojo.QueryParams">
+        select * from t_sys_role where is_deleted=0
+        ${where}
+        order by name asc
+    </select>
+
+
+    <select id="selectRolePermissionByUserId" resultType="SysRolePermission" parameterType="int">
+        select * from t_sys_role_permission tsrp inner join t_sys_user_role sur
+        on tsrp.fk_role_id=sur.fk_role_id
+        where sur.fk_user_id=#{user_id}
+    </select>
+
+    <select id="selectMenuByUserId" resultType="SysMenu" parameterType="int">
+       select * from t_sys_menu where code in(
+       select srp.code from t_sys_role_permission srp
+       inner join t_sys_user_role sur on srp.fk_role_id=sur.fk_role_id
+       where sur.fk_user_id=#{user_id}
+       )
+    </select>
+
+    <select id="selectMenuByMenuId" parameterType="string" resultType="SysMenu">
+        select * from t_sys_menu where menu_id in(${ids})and is_show=1
+    </select>
+</mapper>

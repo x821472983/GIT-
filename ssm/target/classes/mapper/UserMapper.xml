@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dc.ssm.dao.SysUserDao">
+
+
+    <!--SysUserVo映射map-->
+    <resultMap id="mapSysUserVo" type="com.dc.ssm.vo.SysUserVo">
+        <id property="user_id" column="user_id"/>
+        <association property="user" javaType="SysUser">
+            <id property="user_id" column="user_id"/>
+            <result property="account" column="account"/>
+            <result column="name" property="name"/>
+            <result property="head_img_url" column="head_img_url"/>
+            <result property="gender" column="gender"/>
+            <result column="state" property="state"/>
+            <result property="address" column="address"/>
+            <result property="birthday" column="birthday"/>
+            <result property="email" column="email"/>
+        </association>
+        <collection property="roleList" ofType="SysRole">
+            <id column="role_id" property="role_id"/>
+            <result property="name" column="role_name"/>
+            <result column="notes" property="notes"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="mapSysUserRoleVo" type="com.dc.ssm.vo.SysUserRoleVo">
+        <id property="user_id" column="user_id"/>
+        <result property="role_ids" column="role_ids"/>
+        <result property="role_names" column="role_names"/>
+        <association property="user" javaType="SysUser">
+            <id property="user_id" column="user_id"/>
+            <result property="account" column="account"/>
+            <result column="name" property="name"/>
+            <result property="head_img_url" column="head_img_url"/>
+            <result property="gender" column="gender"/>
+            <result column="state" property="state"/>
+            <result property="address" column="address"/>
+            <result property="birthday" column="birthday"/>
+            <result property="email" column="email"/>
+        </association>
+    </resultMap>
+
+    <select id="selectAllUser" resultType="SysUser">
+select * from t_sys_user
+</select>
+
+    <select id="selectAllUserLength" resultType="int">
+select count(user_id) from t_sys_user
+</select>
+
+    <insert id="insertUser" useGeneratedKeys="true"
+            keyProperty="user_id" parameterType="SysUser">
+    insert into
+    t_sys_user(account,password,name,head_img_url,create_user_id,
+    create_user_name,create_time,birthday,email,address,state
+    ,is_deleted,version,gender) values (#{account},#{password},#{name}
+    ,#{head_img_url},#{create_user_id}
+    ,#{create_user_name},now(),#{birthday},#{email}
+    ,#{address},1,0,0,#{gender})
+</insert>
+
+
+    <insert id="insertUserAndRole">
+        insert into t_sys_user_role(fk_user_id,fk_role_id,version)
+        values (#{user_id},#{role_id},0)
+    </insert>
+
+
+    <update id="updateUser" parameterType="SysUser">
+        update t_sys_user set
+        <if test="account != null">account = #{account},</if>
+        <if test="password != null">password = #{password},</if>
+        <if test="name != null">name = #{name},</if>
+        <if test="head_img_url != null">head_img_url = #{head_img_url},</if>
+        <if test="gender!=null">gender=#{gender},</if>
+        <if test="birthday != null">birthday = #{birthday},</if>
+        <if test="address != null">address = #{address},</if>
+        <if test="email != null">email = #{email},</if>
+        version = #{version} + 1,
+        update_time = now(),
+        update_user_name = #{update_user_name},
+        update_user_id =#{update_user_id}
+        where user_id=#{user_id} and version=#{version}
+    </update>
+
+    <select id="selectUserByUserId" parameterType="int"
+            resultType="com.dc.ssm.po.SysUser">
+        select * from t_sys_user where user_id=#{user_id}
+    </select>
+
+    <select id="selectLoginByUserId" parameterType="int" resultType="SysLoginLog">
+        SELECT * FROM t_sys_loginlog where user_id=#{user_id}
+    </select>
+
+
+    <update id="removeUser" parameterType="string">
+        update t_sys_user set is_deleted = 1 where user_id in(${ids})
+    </update>
+
+    <select id="selectUserByAccount" parameterType="string"
+            resultType="com.dc.ssm.po.SysUser">
+        select * from t_sys_user where is_deleted=0 and account=#{account}
+    </select>
+
+    <select id="selectUser" resultMap="mapSysUserRoleVo">
+    SELECT
+        ur.role_ids,
+        ur.role_names,
+        su.*
+        from t_sys_user su
+        LEFT JOIN
+        (SELECT
+        fk_user_id,
+        GROUP_CONCAT(cast(sr.role_id as char)) role_ids,
+        GROUP_CONCAT(sr.name SEPARATOR ',') role_names
+        FROM
+        t_sys_user_role sur
+        join t_sys_role sr on sur.fk_role_id = sr.role_id and sr.is_deleted = 0
+        GROUP BY fk_user_id) ur
+        ON su.user_id = ur.fk_user_id and su.is_deleted = 0
+        where su.is_deleted = 0
+</select>
+
+    <select id="selectRoleName" resultType="SysRole">
+        select name,role_id from t_sys_role where is_deleted=0
+    </select>
+
+
+
+    <update id="deletedUser" parameterType="string">
+         update t_sys_user
+        set is_deleted = 1
+        where is_deleted = 0 and user_id in (${id})
+    </update>
+
+
+    <delete id="deletedUserRole" parameterType="string">
+         delete  from t_sys_user_role
+        where  fk_user_id in (${id})
+    </delete>
+
+    <select id="selectRoleIdByUserId" parameterType="int" resultType="string">
+         select GROUP_CONCAT(fk_role_id) ids from t_sys_user_role where fk_user_id = #{user_id}
+    </select>
+
+    <delete id="deletedUser_Role" parameterType="int">
+        delete from t_sys_user_role where fk_user_id=#{user_id}
+    </delete>
+
+
+    <!--模糊查找用户信息-->
+    <select id="selectUserByCondition" parameterType="com.base.pojo.QueryParams" resultMap="mapSysUserRoleVo">
+        SELECT
+        ur.role_ids,
+        ur.role_names,
+        su.*
+        from t_sys_user su
+        LEFT JOIN
+        (SELECT
+        fk_user_id,
+        GROUP_CONCAT(cast(sr.role_id as char)) role_ids,
+        GROUP_CONCAT(sr.name SEPARATOR ',') role_names
+        FROM
+        t_sys_user_role sur
+        join t_sys_role sr on sur.fk_role_id = sr.role_id and sr.is_deleted = 0
+        GROUP BY fk_user_id) ur
+        ON su.user_id = ur.fk_user_id and su.is_deleted = 0
+        where su.is_deleted = 0
+        ${where}
+    </select>
+
+    <update id="updateState" parameterType="int">
+        update t_sys_user set
+        state=#{state}
+        where is_deleted=0 and user_id=#{user_id}
+    </update>
+
+</mapper>

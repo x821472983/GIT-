@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>操作日志</title>
+</head>
+
+<link rel="stylesheet" type="text/css" href="layui-v2.3.0/layui/css/layui.css" mmedia="all">
+<script src="layui-v2.3.0/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="jquery-3.3.1.js"></script>
+
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin: 20px">
+    <legend>筛选查询</legend>
+</fieldset>
+
+<div>
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">账号</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" placeholder="请输入账号">
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <label class="layui-form-label">操作模块</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" placeholder="请输入模块">
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <label class="layui-form-label">操作时间</label>
+                <div class="layui-input-inline">
+                    <input type="date" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <input type="submit" class="layui-btn" value="搜索">
+            </div>
+        </div>
+    </form>
+</div>
+
+<fieldset class="layui-elem-field layui-field-title" style="margin: 20px">
+    <legend>操作日志</legend>
+</fieldset>
+
+<div>
+    <table class="layui-table" style="text-align: center">
+        <thead>
+        <tr>
+            <td>操作账号</td>
+            <td>操作ip</td>
+            <td>操作时间</td>
+            <td>操作模块</td>
+            <td>操作类型</td>
+            <td>操作内容</td>
+        </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+</div>
+
+<div class="layui-box layui-laypage layui-laypage-default">
+    <a href="">1</a>
+    <a href="">2</a>
+    <a href="">3</a>
+    <a href="">上一页</a>
+    <a href="">下一页</a>
+</div>
+</body>
+</html>
+<script>
+    $(function () {
+        /**
+         * 加载json
+         */
+        $.ajax({
+            url: "jsonFile/files/getAllSysOperationLog.json",
+            dataType: "json",
+            success: function (response) {
+                var content = $(".layui-table>tbody");//获取tbody
+                content.empty();//移除所有子元素
+                for (var i = 0; i < response.data.list.length; ++i) {
+                    var data = response.data.list[i];
+                    var $tr = $("<tr></tr>");
+                    $tr.append("<td>" + data.user_account + "</td>");//操作账号
+                    $tr.append("<td>" + data.request_ip + "</td>");//操作ip
+                    $tr.append("<td>" + formatTime(data.date) + "</td>");//操作时间
+                    $tr.append("<td>" + data.module + "</td>");//操作模块
+                    $tr.append("<td>" + data.type + "</td>");//操作类型
+                    $tr.append("<td></td>");//操作内容
+                    content.append($tr);
+                }
+            }
+        });
+    })
+
+    /**
+     * 毫秒时间转化为"年/月/日 时:分:秒"格式
+     * @param time 毫秒数
+     * @returns {string} 年/月/日 时:分:秒
+     */
+    function formatTime(time) {
+        if (time == null) return "";
+        var t = new Date(time);
+        var y = t.getFullYear();
+        var m = t.getMonth() + 1;
+        var d = t.getDate();
+        var h = t.getHours();
+        var mn = t.getMinutes();
+        var sec = t.getSeconds();
+        return y + "-" + (m > 9 ? m : "0" + m) + "-" + (d > 9 ? d : "0" + d) + " " + (h > 9 ? h : "0" + h)
+            + ":" + (mn > 9 ? mn : "0" + mn) + ":" + (sec > 9 ? sec : "0" + sec);
+    }
+
+    //Demo
+    layui.use('form', function () {
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+</script>

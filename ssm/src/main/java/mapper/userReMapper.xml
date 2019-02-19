@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dc.ssm.dao.userDao">
+
+    <select id="selectuser" parameterType="int" resultType="user_user">
+        select name,user_id from t_sys_user where user_id not in (#{user_id})
+    </select>
+
+    <insert id="insertReport" parameterType="report" useGeneratedKeys="true"
+            keyProperty="report_id">
+        insert into sys_report(report_id,issuer,report_title,report_content)
+        value(#{report_id},#{issuer},#{report_title},#{report_content})
+    </insert>
+
+    <insert id="insertUserReport" parameterType="int">
+        insert into report_permission(user_id,report_id,read_state)
+        value (#{user_id},#{report_id},0)
+    </insert>
+
+    <select id="selectReport" resultType="report" parameterType="int">
+        select report_title,report_content from sys_report where report_id=#{report_id}
+    </select>
+    
+    <select id="notRead" resultType="report" parameterType="int">
+        select report_id,report_title from report_permission where user_id={user_id} and read_state=0
+    </select>
+
+    <select id="allReport" resultType="report" parameterType="int">
+        select report_id,report_title from report_permission where user_id={user_id}
+    </select>
+
+</mapper>

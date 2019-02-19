@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context-4.3.xsd
+http://www.springframework.org/schema/mvc
+http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+<!--扫描AOP-->
+
+    <context:component-scan base-package="com.base.aop"/>
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+    <!--扫描controller包，加载驱动-->
+    <context:component-scan base-package="com.dc.ssm.controller"/>
+    <mvc:annotation-driven/>
+
+    <!---->
+    <context:annotation-config/>
+    <mvc:default-servlet-handler/>
+
+
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--<property name="prefix" value="/WEB-INF/jsp/"/>-->
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <property name="maxUploadSize" value="10485760000"/>
+    </bean>
+
+    <!-- 把Swagger配置文件类增加spring容器 -->
+    <bean class="com.base.swagger.SwaggerConfig" />
+    <!-- 防止spring拦截swagger接口aip。 -->
+    <mvc:resources mapping="/swagger/**" location="/swagger/" />
+
+    <context:component-scan base-package="com.dc.ssm"/>
+
+    <context:component-scan base-package="com.base"/>
+</beans>

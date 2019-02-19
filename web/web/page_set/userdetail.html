@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户查看页</title>
+</head>
+
+<link rel="stylesheet" type="text/css" href="layui-v2.3.0/layui/css/layui.css" mmedia="all">
+<script src="layui-v2.3.0/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="jquery-3.3.1.js"></script>
+
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin: 20px">
+    <legend>用户信息</legend>
+</fieldset>
+
+<div style="text-align: center">
+    <div>
+        <img src="images/accounthead.png">
+        <p style="font-weight: bold;font-size: 16px" id="userAccount"></p>
+        <p style="font-weight: bold;font-size: 20px" id="userRole"></p>
+    </div>
+    <div>
+        <table class="layui-table">
+            <thead>
+            <tr>
+                <td>账号</td>
+                <td>昵称</td>
+                <td>性别</td>
+                <td>生日</td>
+                <td>籍贯</td>
+                <td>专业</td>
+                <td>邮箱</td>
+                <td>用户类型</td>
+                <td>注册时间</td>
+                <td>qq</td>
+            </tr>
+            </thead>
+            <tbody>
+            <!--<tr>
+                <td><label>18000000000</label></td>
+                <td><label>admin</label></td>
+                <td><label>保密</label></td>
+                <td><label></label></td>
+                <td><label></label></td>
+                <td><label>信息与计算科学</label></td>
+                <td><label></label></td>
+                <td><label></label></td>
+                <td><label>2017-07-24 17:25:38</label></td>
+                <td><label></label></td>
+            </tr>-->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<fieldset class="layui-elem-field layui-field-title" style="margin: 20px">
+    <legend>登录历史记录</legend>
+</fieldset>
+
+<div style="text-align: center">
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <td>登录时间</td>
+            <td>用户账号</td>
+            <td>登录ip</td>
+            <td>登录状态</td>
+            <td>登录类型</td>
+            <td>手机型号/浏览器型号</td>
+            <td>imei</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>2018-06-19 14:48:38</td>
+            <td>18000000000</td>
+            <td>120.1.1.1</td>
+            <td>密码错误</td>
+            <td>Andriod</td>
+            <td>华为</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>2018-06-19 14:48:38</td>
+            <td>18000000000</td>
+            <td>120.1.1.1</td>
+            <td>账号错误</td>
+            <td>ios</td>
+            <td>iphone7</td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="layui-box layui-laypage layui-laypage-default">
+    <a href="">1</a>
+    <a href="">2</a>
+    <a href="">3</a>
+    <a href="">上一页</a>
+    <a href="">下一页</a>
+</div>
+</body>
+</html>
+<script>
+    $(function () {
+        $.ajax({
+            url: "jsonFile/files/getUserById.json",
+            dataType: "json",
+            success: function (response) {
+                var content = $(".layui-table").first().children("tbody");//获取tbody
+                var data = response.data;
+                //创建表格
+                var $tr = $("<tr></tr>");
+                $tr.append("<td>" + data.account + "</td>");//账号
+                $tr.append("<td></td>");//昵称
+                $tr.append("<td></td>");//性别
+                $tr.append("<td>"+data.birthday+"</td>");//生日
+                $tr.append("<td>" + data.address + "</td>");//籍贯
+                $tr.append("<td></td>");//专业
+                $tr.append("<td>"+data.email+"</td>");//邮箱
+                $tr.append("<td></td>");//用户类型
+                $tr.append("<td>"+formatTime(data.create_time)+"</td>");//注册时间
+                $tr.append("<td></td>");//qq
+                content.append($tr);
+
+                $("#userAccount").text(data.account);
+                $("#userRole").text(data.roleList[0].name);
+            }
+        });
+    });
+
+    /**
+     * 毫秒时间转化为"年/月/日 时:分:秒"格式
+     * @param time 毫秒数
+     * @returns {string} 年/月/日 时:分:秒
+     */
+    function formatTime(time) {
+        var t = new Date(time);
+        var y = t.getFullYear();
+        var m = t.getMonth() + 1;
+        var d = t.getDate();
+        var h = t.getHours();
+        var mn = t.getMinutes();
+        var sec = t.getSeconds();
+        return y + "-" + (m > 9 ? m : "0" + m) + "-" + (d > 9 ? d : "0" + d) + " " + (h > 9 ? h : "0" + h)
+            + ":" + (mn > 9 ? mn : "0" + mn) + ":" + (sec > 9 ? sec : "0" + sec);
+    }
+    //Demo
+    layui.use('form', function () {
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+</script>

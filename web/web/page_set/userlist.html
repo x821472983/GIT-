@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户列表</title>
+</head>
+
+<link rel="stylesheet" type="text/css" href="layui-v2.3.0/layui/css/layui.css" mmedia="all">
+<script src="layui-v2.3.0/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="jquery-3.3.1.js"></script>
+<script src="myLibrary/myJavaScript.js" type="text/javascript"></script>
+<link href="myLibrary/myCss.css" rel="stylesheet" type="text/css">
+
+<style>
+    .layui-input {
+        width: 13%;
+        display: inline-block;
+        margin-right: 20px;
+    }
+
+    .page {
+        float: right;
+    }
+
+    .layui-table {
+        text-align: center;
+    }
+
+    .layui-table th {
+        text-align: center;
+    }
+
+</style>
+
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin: 20px">
+    <legend>筛选查询</legend>
+</fieldset>
+<div class="search">
+    <form class="layui-form" style="margin-left: 20px">
+        用户账号：<input type="text" name="title" placeholder="请输入账号" autocomplete="off" class="layui-input">
+        用户昵称：<input type="text" name="title" placeholder="请输入昵称" autocomplete="off" class="layui-input">
+        姓名：<input type="text" name="title" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+        <input type="submit" value="搜索" class="layui-btn">
+        <a class="layui-btn" href="createuser.html">添加用户</a>
+        <a class="layui-btn">批量删除</a>
+        <a class="layui-btn">导入</a>
+        <a class="layui-btn">导出</a>
+    </form>
+</div>
+<fieldset class="layui-elem-field layui-field-title" style="margin: 20px">
+    <legend>用户信息列表</legend>
+</fieldset>
+<div class="list">
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th><input type="checkbox" class="allPick"></th>
+            <th>账号</th>
+            <th>手机号码</th>
+            <th>用户昵称</th>
+            <th>姓名</th>
+            <th>所属角色</th>
+            <th>区域</th>
+            <th>出生日期</th>
+            <th>账户启用状态</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        </tbody>
+    </table>
+
+</div>
+
+<div class="layui-box layui-laypage"></div>
+
+<br>跳转至<input type="text" id="gotoPage">
+<button id="gotoBt">GO</button>
+
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+
+        /**
+         * 加载json数据
+         */
+        $.ajax({
+            url: "jsonFile/files/getUsers.json",
+            dataType: "json",
+            success: function (response) {
+                var content = $(".layui-table>tbody");//获取tbody
+                content.empty();//移除所有子元素
+                for (var i = 0; i < response.data.list.length; ++i) {
+                    var data = response.data.list[i];
+                    var $tr = $("<tr></tr>");
+                    $tr.append("<td><input type='checkbox' class=\"subPick\"></td>");
+                    $tr.append("<td>" + data.account + "</td>");//账号
+                    $tr.append("<td></td>");//手机号码
+                    $tr.append("<td></td>");//用户昵称
+                    $tr.append("<td>" + data.name + "</td>");//姓名
+                    $tr.append("<td>" + data.roleList[0].name + "</td>");//所属角色
+                    $tr.append("<td></td>");//区域
+                    $tr.append("<td>" + formatTime(data.birthday) + "</td>");//出生日期
+                    var addClass = data.state == 1 ? "layui-form-onswitch" : "";
+                    var word = data.state == 1 ? "ON" : "OFF";
+                    $tr.append("<td><div class='layui-unselect layui-form-switch " + addClass + "' lay-skin='_switch'\>" +
+                        "<em>" + word + "</em><i></i></div></td>");//用户启用状态
+                    $tr.append("<td><a class=\"layui-btn layui-btn-xs layui-btn-normal\" href=\"userdetail.html\">查看</a>\n" +
+                        "<a class=\"layui-btn layui-btn-xs\" href=\"modifyuser.html\">编辑</a>\n" +
+                        "<a class=\"layui-btn layui-btn-xs layui-btn-danger\">删除</a></td>");
+                    content.append($tr);
+                }
+            }
+        });
+
+
+        /**
+         * 加载页面数量数据
+         */
+        var page_info = {
+            "cur_page": 1,
+            "total_page": 44,
+            "page_size": 10,
+            "total_num": 112
+        };
+
+        /**
+         * 初始化页面
+         */
+        initPages(page_info);
+
+        /**
+         * 全选
+         */
+        initAllPick();
+
+    });
+</script>

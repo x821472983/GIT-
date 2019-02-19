@@ -1,0 +1,78 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>账户设置</title>
+</head>
+${basePath}
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin: 20px">
+    <legend>账户设置</legend>
+</fieldset>
+
+<div>
+    <form class="layui-form" style="width: 400px;text-align: center">
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <img src="images/accounthead.png"><br>
+                <button class="layui-btn">上传头像</button>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-block">
+                <input type="text" readonly placeholder="admin" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">Email</label>
+            <div class="layui-input-block">
+                <input type="text" readonly placeholder="18000000000@vip.qq.com" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">旧密码</label>
+            <div class="layui-input-block">
+                <input type="password" placeholder="请输入旧密码" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">新密码</label>
+            <div class="layui-input-block">
+                <input type="password" placeholder="请输入新密码" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">确认密码</label>
+            <div class="layui-input-block">
+                <input type="password" placeholder="请重复输入密码" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="submit" value="提交" class="layui-btn">
+            </div>
+        </div>
+
+    </form>
+</div>
+</body>
+</html>
+<script>
+    //Demo
+    layui.use('form', function () {
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+</script>

@@ -1,0 +1,12 @@
+.layui-laypage .layui-laypage-curr {
+    color: white;
+    background-color: #009688;
+}
+
+.layui-laypage a:hover {
+    color: #333;
+}
+
+.layui-laypage a.hidden {
+    display: none;
+}

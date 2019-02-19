@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="
+   http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema/context/spring-context-4.0.xsd
+  http://www.springframework.org/schema/mvc
+   http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd"
+
+>
+
+    <!--MVC默认的处理器映射，直接将uri与实现类进行绑定，书写方便，但是耦合性高。-->
+    <bean id="defaultHandlerMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"></bean>
+    <!--将test.action映射到springMVC_test.MVC_test中-->
+    <bean name="/MVC_test.action" class="springMVC_test.MVC_test"></bean>
+    <!--使用MVC注解驱动，代替注解映射器和注解适配器--><!--扫描器，扫描指定文件夹-->
+    <mvc:annotation-driven/>
+    <context:component-scan base-package="springMVC_test"/>
+<!--    <context:annotation-config/>-->
+ <!--   <context:component-scan base-package="Dao"/>-->
+    <context:component-scan base-package="RSA"/>
+    <context:component-scan base-package="Dao"/>
+
+
+
+
+    <!--前缀后缀注释-->
+    <!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+     <property name="prefix">
+         <value>//</value>
+     </property>
+     <property name="suffix">
+         <value>.jsp</value>
+     </property>
+ </bean>-->
+
+    <!--异常错误-->
+    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="defaultErrorView">
+            <value>error.jsp</value>
+        </property>
+        <property name="defaultStatusCode">
+            <value>500</value>
+        </property>
+    </bean>
+    <!--文件加载-->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="102400000"></property>
+    </bean>
+    <mvc:default-servlet-handler/>
+    <!-- 把Swagger配置文件类增加spring容器 -->
+    <bean class="springMVC_test.Swagger"/>
+    <!-- 防止spring拦截swagger接口aip。 -->
+    <mvc:resources mapping="/swagger/**" location="/swagger/"/>
+    <bean id="HelloWord" class="Dao.HelloWord">
+<property name="message" value="Hello Word"></property>
+    </bean>
+
+    <bean id="dataSource" class="user.DatabaseConfig">
+        <property name="databaseName" value="test"/>
+        <property name="ip" value="127.0.0.1"/>
+        <property name="port" value="3306"/>
+        <property name="userName" value="userName"/>
+        <property name="passwd" value="test"></property>
+    </bean>
+
+
+</beans>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>角色列表</title>
+</head>
+
+<link rel="stylesheet" type="text/css" href="layui-v2.3.0/layui/css/layui.css" mmedia="all">
+<script src="layui-v2.3.0/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="jquery-3.3.1.js"></script>
+<script src="myLibrary/myJavaScript.js" type="text/javascript"></script>
+<link href="myLibrary/myCss.css" rel="stylesheet" type="text/css">
+
+
+<style>
+    .layui-table th {
+        text-align: center;
+    }
+</style>
+
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin: 20px">
+    <legend>筛选查询</legend>
+</fieldset>
+
+<div class="operation">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">角色名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="search_context" placeholder="请输入角色名称" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <input type="submit" value="搜索" class="layui-btn">
+            </div>
+            <a class="layui-btn" href="createrole.html">添加角色</a>
+            <a class="layui-btn">批量删除</a>
+        </div>
+    </form>
+</div>
+
+<fieldset class="layui-elem-field layui-field-title" style="margin: 20px">
+    <legend>角色信息列表</legend>
+</fieldset>
+
+<div class="list">
+    <table class="layui-table" style="text-align: center">
+        <thead>
+        <tr>
+            <th><input type="checkbox" onclick="allPick()" id="allPickBt"></th>
+            <th>角色名称</th>
+            <th>角色类型</th>
+            <th>创建时间</th>
+            <th>创建人</th>
+            <th>修改时间</th>
+            <th>修改人</th>
+            <th>备注</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+</div>
+<div class="layui-box layui-laypage"></div>
+<br>跳转至<input type="text" id="gotoPage">
+<button id="gotoBt">GO</button>
+</body>
+</html>
+<script>
+
+    $(function () {
+
+        /**
+         * 初始化页面
+         */
+        initPages({
+            "cur_page": 1,
+            "total_page": 44,
+            "page_size": 10,
+            "total_num": 112
+        });
+
+        /**
+         * 加载json数据
+         */
+        $.ajax({
+            url: "jsonFile/files/getRoles.json",
+            dataType: "json",
+            success: function (response) {
+                var content = $(".layui-table>tbody");
+                content.empty();//移除所有子元素
+                for (var i = 0; i < response.list.length; ++i) {
+                    var data = response.list[i];
+                    var $tr = $("<tr></tr>");
+                    $tr.append("<td><input type='checkbox' name='check'></td>");//选择框
+                    $tr.append("<td>" + data.name + "</td>");//角色名称
+                    $tr.append("<td></td>");//角色类型
+                    $tr.append("<td></td>");//创建时间
+                    $tr.append("<td></td>");//创建人
+                    $tr.append("<td></td>");//修改时间
+                    $tr.append("<td></td>");//修改人
+                    $tr.append("<td>" + data.memo + "</td>");//备注
+                    $tr.append("<td><a class=\"layui-btn layui-btn-xs layui-btn-normal\" href=\"roledetail.html\">查看</a>" +
+                        "<a class=\"layui-btn layui-btn-xs\" href=\"modifyrole.html\">编辑</a>" +
+                        "<a class=\"layui-btn layui-btn-xs layui-btn-danger\">删除</a></td>");
+                    content.append($tr);
+                }
+            }
+        });
+
+        /**
+         * 毫秒时间转化为"年/月/日 时:分"格式
+         * @param time 毫秒数
+         * @returns {string} 年/月/日 时:分
+         */
+        function formatTime(time) {
+            var t = new Date(time);
+            var y = t.getFullYear();
+            var m = t.getMonth() + 1;
+            var d = t.getDate();
+            var h = t.getHours();
+            var mn = t.getMinutes();
+            return y + "/" + m + "/" + d + " " + h + ":" + mn;
+        }
+
+        //layuiDemo
+        layui.use('form', function () {
+            var form = layui.form;
+
+            //监听提交
+            form.on('submit(formDemo)', function (data) {
+                layer.msg(JSON.stringify(data.field));
+                return false;
+            });
+        });
+    });
+
+    /**
+     * 全选
+     */
+    function allPick() {
+        var checks = document.getElementsByName("check");
+        var bool = document.getElementById("allPickBt").checked;
+        for (var i = 0; i < checks.length; ++i) {
+            checks[i].checked = bool;
+        }
+    }
+</script>

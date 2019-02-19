@@ -1,0 +1,29 @@
+{
+  "code": 0,
+  "message": "查询成功",
+  "messageEX": "",
+  "data": {
+    "role_id": 1,
+    "name": "超级管理员",
+    "list": [
+      {
+        "permission": "1101",
+        "code": 101
+      },
+      {
+        "permission": "100111",
+        "code": 102
+      },
+      {
+        "permission": "1",
+        "code": 103
+      },
+      {
+        "permission": "1",
+        "code": 104
+      }
+
+    ],
+    "memo": "我是管理员"
+  }
+}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改角色</title>
+</head>
+
+<link rel="stylesheet" type="text/css" href="layui-v2.3.0/layui/css/layui.css" mmedia="all">
+<script src="layui-v2.3.0/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin: 20px">
+    <legend>修改角色</legend>
+</fieldset>
+<form class="layui-form" action="" style="width: 700px">
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="rolename" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+            <textarea name="note" class="layui-textarea"></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="checkbox" name="" title="用户管理">
+            <input type="checkbox" name="" title="查询">
+            <input type="checkbox" name="" title="删除">
+            <input type="checkbox" name="" title="修改">
+            <input type="checkbox" name="" title="导入">
+            <input type="checkbox" name="" title="导出">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="checkbox" name="" title="角色管理">
+            <input type="checkbox" name="" title="查询">
+            <input type="checkbox" name="" title="删除">
+            <input type="checkbox" name="" title="修改">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="checkbox" name="" title="系统管理">
+            <input type="checkbox" name="" title="登录信息">
+            <input type="checkbox" name="" title="操作日志">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="checkbox" name="" title="选择全部">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="submit" value="提交" class="layui-btn">
+        </div>
+
+    </div>
+
+</form>
+
+</body>
+</html>
+<script>
+    //Demo
+    layui.use('form', function () {
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+</script>

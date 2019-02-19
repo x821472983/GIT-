@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dc.ssm.dao.OperationLogDao">
+
+    <select id="selectOperationLog" resultType="SysOperationLog">
+     select * from t_sys_operationlog ORDER BY date desc
+    </select>
+
+
+    <insert id="insertOperationLog" parameterType="SysOperationLog" useGeneratedKeys="true" keyProperty="operationlog_id">
+        insert into t_sys_operationLog
+        (user_id, user_account, date, user_name,
+        request_ip, module, type, request_method)
+        values
+        (#{user_id}, #{user_account}, now(), #{user_name},
+        #{request_ip}, #{module}, #{type}, #{request_method})
+    </insert>
+</mapper>

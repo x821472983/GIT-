@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新增角色</title>
+</head>
+
+<link rel="stylesheet" type="text/css" href="layui-v2.3.0/layui/css/layui.css" mmedia="all">
+<script src="layui-v2.3.0/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="jquery-3.3.1.js"></script>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin: 20px">
+    <legend>新增角色</legend>
+</fieldset>
+
+<form class="layui-form" action="" style="width: 700px">
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="rolename" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+            <textarea name="note" class="layui-textarea"></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block item">
+
+            <div class="user" style="display: inline">
+                <input type="checkbox" title="用户管理">
+            </div>
+
+            <input type="checkbox" id="qwer" name="" title="查询">
+            <input type="checkbox" name="" title="删除">
+            <input type="checkbox" name="" title="修改">
+            <input type="checkbox" name="" title="导入">
+            <input type="checkbox" name="" title="导出">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block item">
+
+            <div class="role" style="display: inline">
+                <input type="checkbox" title="角色管理">
+            </div>
+
+            <input type="checkbox" name="" title="查询">
+            <input type="checkbox" name="" title="删除">
+            <input type="checkbox" name="" title="修改">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block item">
+
+            <div class="system" style="display: inline">
+                <input type="checkbox" title="系统管理">
+            </div>
+
+            <input type="checkbox" name="" title="登录信息">
+            <input type="checkbox" name="" title="操作日志">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+
+            <div class="allPick" style="display: inline">
+                <input type="checkbox" title="选择全部">
+            </div>
+
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="submit" value="提交" class="layui-btn">
+        </div>
+
+    </div>
+</form>
+
+</body>
+</html>
+<script>
+
+
+    $(document).ready(function () {
+
+        //Demo
+        layui.use('form', function () {
+            var form = layui.form;
+
+            //监听提交
+            form.on('submit(formDemo)', function (data) {
+                layer.msg(JSON.stringify(data.field));
+                return false;
+            });
+        });
+
+
+        /**
+         * 各项主按钮点击
+         */
+        function itemClick(item) {
+            if (item.children().prop("checked")) {
+                item.siblings(".layui-unselect").addClass("layui-form-checked");
+                item.siblings("input").prop("checked", true);
+            } else {
+                item.siblings(".layui-unselect").removeClass("layui-form-checked");
+                item.siblings("input").prop("checked", false);
+            }
+        }
+
+
+        /**
+         * 所有主按钮点击事件绑定
+         */
+        $(".item").children().click(function () {
+            itemClick($(this));
+        });
+
+
+        /**
+         * 全选按钮
+         */
+        $(".allPick").click(function () {
+            if ($(this).children().prop("checked")) {
+                $(".layui-unselect").addClass("layui-form-checked");
+                $("input").prop("checked", true);
+            } else {
+                $(".layui-unselect").removeClass("layui-form-checked");
+                $("input").prop("checked", false);
+            }
+        });
+
+    });
+
+</script>

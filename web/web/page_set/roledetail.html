@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>角色信息</title>
+</head>
+
+<link rel="stylesheet" type="text/css" href="layui-v2.3.0/layui/css/layui.css" mmedia="all">
+<script src="layui-v2.3.0/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="jquery-3.3.1.js"></script>
+<style>
+    .item {
+        pointer-events: none; /*取消鼠标点击事件*/
+    }
+</style>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin: 20px">
+    <legend>角色信息</legend>
+</fieldset>
+
+<form class="layui-form" action="" style="width: 700px">
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色名称</label>
+        <div class="layui-input-block">
+            <input type="text" id="rolename" class="layui-input" disabled>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+            <textarea id="note" class="layui-textarea" disabled></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+
+        <div class="layui-form-item">
+            <div class="layui-input-block item" id="101">
+
+                <input type="checkbox" title="角色管理">
+
+                <input type="checkbox" name="" title="查询">
+                <input type="checkbox" name="" title="删除">
+                <input type="checkbox" name="" title="修改">
+            </div>
+        </div>
+        <!--ajax-101和102位置交换过了-->
+        <div class="layui-input-block item" id="102">
+
+            <input type="checkbox" title="用户管理">
+
+            <input type="checkbox" name="" title="查询">
+            <input type="checkbox" name="" title="删除">
+            <input type="checkbox" name="" title="修改">
+            <input type="checkbox" name="" title="导入">
+            <input type="checkbox" name="" title="导出">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block item" id="103">
+
+            <input type="checkbox" title="系统管理">
+
+            <input type="checkbox" name="" title="登录信息">
+            <input type="checkbox" name="" title="操作日志">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block item" id="104">
+
+            <input type="checkbox" name="" title="选择全部">
+
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" type="button">关闭</button>
+        </div>
+    </div>
+</form>
+
+</body>
+</html>
+<script>
+    //Demo
+    layui.use('form', function () {
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+
+    $(function () {
+        $.ajax({
+            url: "jsonFile/files/getRoleById.json",
+            dataType: "json",
+            success: function (response) {
+                $("#rolename").val(response.data.name);
+                $("#note").val(response.data.memo);
+                var perList = response.data.list;
+                for (var i = 0; i < perList.length; ++i) {
+                    var curItemList = $("#" + perList[i].code).children();
+                    for (var j = 0; j < perList[i].permission.length; ++j) {
+                        if (perList[i].permission.charAt(j) == '1') {
+                            curItemList.eq(j).prop("checked",true);
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+
+</script>

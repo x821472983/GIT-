@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页框架</title>
+</head>
+<link rel="stylesheet" type="text/css" href="layui-v2.3.0/layui/css/layui.css" mmedia="all">
+<script src="layui-v2.3.0/layui/layui.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript" src="jquery-3.3.1.js"></script>
+
+<style>
+    html, body {
+        width: 100%;
+        height: 100%;
+    }
+
+    .layui-tab-title .layui-this {
+        background-color: #1abc9c;
+        color: white;
+    }
+
+    .layui-tab-title .layui-this:after {
+        border: none;
+    }
+
+    .layui-tab-item iframe {
+        width: calc(100% - 200px);
+        position: absolute;
+        height: calc(100% - 123px);
+        top: 104px;
+        left: 200px;
+        border: none;
+    }
+
+</style>
+<body>
+<div class="header" style="width: 100%;height: 60px;background-color: #393D49;border-bottom: 2px #1abc9c solid">
+
+    <div class="header_left" style="float: left;width: 400px">
+        <img src="images/icon_white_1.png" style="float: left;padding: 13px">
+        <img src="images/icon_white_2.png" style="float: left;position: relative;right: 38px;top:20px">
+        <h2 style="color: white;padding-top: 15px">统一身份认证系统</h2>
+    </div>
+
+    <div class="header_right" style="float: right; ">
+        <ul class="layui-nav" lay-filter="">
+
+            <li class="layui-nav-item">
+                <!--<img src="images/admin_gray.png" style="padding-right: 5px">-->
+                <a class="user_name">admin</a>
+
+                <dl class="layui-nav-child" style="color: black">
+                    <dt><span>帐号信息</span><a href="javascript:;">帐号设置</a></dt>
+                    <dd><label>所属部门：</label><span>销售部</span></dd>
+                    <dd><label>本次登录：</label><span>2018-07-18 14：51</span></dd>
+                    <dd><label>登录地区：</label><span>浙江嘉兴</span></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="index.html">首页</a></li>
+            <li class="layui-nav-item"><a href="">退出登录</a></li>
+        </ul>
+    </div>
+</div>
+
+<!--左侧-->
+<div class="content">
+    <div class="content_left">
+        <ul class="layui-nav layui-nav-tree layui-nav-side" lay-filter="test" style="margin-top: 62px;border-radius: 0">
+            <li class="layui-nav-item homepage"><a name="">首页</a></li>
+            <li class="layui-nav-item"><i></i><a>系统管理</a> <!-- layui-nav-itemed-->
+                <dl class="layui-nav-child">
+                    <dd><a name="userlist.html" data-url="userlist.html"><i></i>用户管理</a></dd><!--name-->
+                    <dd><a name="operationlog.html"><i></i>操作日志</a></dd>
+                    <dd><a name="loginlog.html"><i></i>登录日志</a></dd>
+                    <dd><a name="rolelist.html"><i></i>角色管理</a></dd>
+                </dl>
+            </li>
+        </ul>
+    </div>
+
+
+    <!--顶部-->
+    <div class="content_right" style="margin-left: 200px;">
+
+        <div class="layui-tab" lay-allowClose="true" style="margin: 0px" lay-filter="demo"><!--demo-->
+            <ul class="layui-tab-title" style="border-bottom: 2px #1abc9c solid;">
+                <li class="layui-this">首页</li>
+                <li>用户管理</li>
+                <li>操作日志</li>
+                <li>登录日志</li>
+                <li>角色管理</li>
+            </ul>
+            <div class="layui-tab-content" style="padding: 0px;">
+                <div class="layui-tab-item layui-show">
+                    <iframe src=""></iframe>
+                </div>
+                <div class="layui-tab-item">
+                    <iframe src="userlist.html"></iframe>
+                </div>
+                <div class="layui-tab-item">
+                    <iframe src="operationlog.html"></iframe>
+                </div>
+                <div class="layui-tab-item">
+                    <iframe src="loginlog.html"></iframe>
+                </div>
+                <div class="layui-tab-item">
+                    <iframe src="rolelist.html"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!--<label><i></i>首页</label>
+            <button>刷新</button>-->
+
+        <div class="content_right_foot" style="text-align: center;width: calc(100% - 200px);
+        color: white;position: absolute;bottom: 0px;background-color: #393D49">
+            Copyright © 东臣科技, All Rights Reserved.
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script>
+
+    //注意：导航 依赖 element 模块，否则无法进行功能性操作
+    layui.use('element', function () {
+        var element = layui.element;
+
+        /**
+         * 左侧点击判断添加
+         */
+        $(".layui-nav-tree .layui-nav-child a").click(function () { /*.homepage>a*/
+            /*alert($(this).data('url'));*/
+            if ($(".layui-tab-item>iframe[src='" + $(this).prop("name") + "']").length == 0) {
+                var options = {};
+                options.id = new Date().getTime();
+                options.title = $(this).text() + "<i data-id='" + options.id + "'></i>";
+                options.content = "<iframe src = '" + $(this).prop("name") //name取值
+                    + "' data-id='" + options.id + "'></iframe>";
+                element.tabAdd('demo', options);
+
+                //新添加的底部标签需要增加点击事件
+                $(".layui-tab-title>li").click(function () {
+                    afterTopClick(this);
+                });
+            }
+
+            /**
+             * 左侧带动顶部
+             */
+            var title = $(this).text();//当前左侧点击的text
+            $(".layui-tab-title>li").each(function () {
+                if ($(this).text().substr(0, $(this).text().length - 1) == title) { //当前顶部text匹配左侧text
+                    $(this).click();
+                }
+            })
+        });
+
+        /**
+         * 顶部带动左侧
+         */
+
+        $(".layui-tab-title>li").click(function () {
+            afterTopClick(this);
+        });
+
+    });
+
+    /**
+     * 点击顶部按键之后带动左侧(仅改变class)
+     */
+    function afterTopClick(bt) {
+        var curText = $(bt).text().substr(0, $(bt).text().length - 1);
+        $(".layui-nav-child>dd.layui-this").removeClass("layui-this");
+        $(".layui-nav-child>dd").each(function () {
+            if ($(this).text() == curText) {
+                $(this).addClass("layui-this");
+            }
+        });
+    }
+
+</script>
